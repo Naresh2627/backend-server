@@ -3,6 +3,6 @@ services:
     name: habit-tracker-backend
     env: node
     plan: free
-    buildCommand: npm install
-    startCommand: node index.js
-    healthCheckPath: /api/health
+    buildCommand: "npm ci --only=production"
+    startCommand: "node index.js"
+    healthCheckPath: "/api/health"
