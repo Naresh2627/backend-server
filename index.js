@@ -17,8 +17,16 @@ app.use(helmet());
 app.use(morgan('combined'));
 
 // CORS middleware
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3005',
+    process.env.CLIENT_URL
+].filter(Boolean);
+
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: process.env.NODE_ENV === 'production' 
+        ? process.env.CLIENT_URL 
+        : allowedOrigins,
     credentials: true
 }));
 
@@ -38,7 +46,26 @@ app.get('/api/health', (req, res) => {
     res.json({
         status: 'OK',
         timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
+        environment: process.env.NODE_ENV || 'development',
+        port: PORT,
+        cors: process.env.CLIENT_URL || 'localhost'
+    });
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Habit Tracker API Server',
+        status: 'Running',
+        version: '1.0.0',
+        endpoints: {
+            health: '/api/health',
+            auth: '/api/auth',
+            habits: '/api/habits',
+            progress: '/api/progress',
+            users: '/api/users',
+            share: '/api/share'
+        }
     });
 });
 
